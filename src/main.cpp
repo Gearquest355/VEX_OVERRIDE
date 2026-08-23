@@ -2,16 +2,18 @@
 #include "lemlib/api.hpp"
 
 // left motor group
-pros::MotorGroup left_motor_group({-1, 2, -3}, pros::MotorGears::blue);
+MotorGroup left_motor_group({-1, 2, -3}, pros::MotorGears::blue);
 // right motor group
-pros::MotorGroup right_motor_group({4, -5, 6}, pros::MotorGears::green);
+MotorGroup right_motor_group({4, -5, 6}, pros::MotorGears::blue);
+Motor nameOfMotor(7);//example of singular motor setup
+
 
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&left_motor_group, // left motor group
                               &right_motor_group, // right motor group
                               10, // 10 inch track width
-                              lemlib::Omniwheel::NEW_4, // using new 4" omnis
-                              360, // drivetrain rpm is 360
+                              lemlib::Omniwheel::NEW_275, // using new 4" omnis
+                              450, // drivetrain rpm is 360
                               2 // horizontal drift is 2 (for now)
 );
 
@@ -19,12 +21,12 @@ lemlib::Drivetrain drivetrain(&left_motor_group, // left motor group
 pros::Imu imu(10);
 // horizontal tracking wheel encoder
 pros::Rotation horizontal_encoder(20);
-// vertical tracking wheel encoder
-pros::adi::Encoder vertical_encoder('C', 'D', true);
+//vertical tracking wheel
+pros::Rotation vertical_encoder(21);
 // horizontal tracking wheel
 lemlib::TrackingWheel horizontal_tracking_wheel(&horizontal_encoder, lemlib::Omniwheel::NEW_275, -5.75);
 // vertical tracking wheel
-lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_275, -2.5);
+lemlib::TrackingWheel vertical_tracking_wheel(&vertical_encoder, lemlib::Omniwheel::NEW_275, -2.5); //distance from the center
 
 // odometry settings
 lemlib::OdomSensors sensors(&vertical_tracking_wheel, // vertical tracking wheel 1, set to null
@@ -77,7 +79,7 @@ void initialize() {
             pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
             pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
             // delay to save resources
-            pros::delay(20);
+            pros::delay(100);
         }
     });
 }
@@ -86,14 +88,19 @@ pros::Controller controller(pros::E_CONTROLLER_MASTER);
 
 void opcontrol() {
     // loop forever
+    int leftY;
+    int rightY;
     while (true) {
         // get left y and right x positions
-        int leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-        int leftX = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+        leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        rightY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+
+        //left_motor_group.move(leftY);
+        //right_motor_group(rightY);
 
         // move the robot
         // prioritize steering slightly
-        chassis.arcade(leftY, leftX, false, 0.75);
+        //chassis.tank(leftY, leftX, false, 0.75);
 
         // delay to save resources
         pros::delay(25);
@@ -119,3 +126,10 @@ lemlib::Chassis chassis(drivetrain,
                         &throttle_curve, 
                         &steer_curve
 );
+
+
+void autonomous(){
+    chassis.setPose(0,0,0); //sets starting position in inches(x, y, angle)
+    chassis.moveToPoint(48, 0, 1000, true{.forwards = false, .minSpeed = 30, .maxSpeed = 80}, true);
+    chassis.turnToHeading(90,2000);
+}

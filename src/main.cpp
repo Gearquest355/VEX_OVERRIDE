@@ -2,10 +2,10 @@
 #include "lemlib/api.hpp"
 
 // left motor group
-MotorGroup left_motor_group({-1, 2, -3}, pros::MotorGears::blue);
+MotorGroup left_motor_group({11, 1}, pros::MotorGears::blue);
 // right motor group
-MotorGroup right_motor_group({4, -5, 6}, pros::MotorGears::blue);
-Motor nameOfMotor(7);//example of singular motor setup
+MotorGroup right_motor_group({-20, -10}, pros::MotorGears::blue);
+//Motor nameOfMotor(7);//example of singular motor setup
 
 
 // drivetrain settings
@@ -93,14 +93,14 @@ void opcontrol() {
     while (true) {
         // get left y and right x positions
         leftY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-        rightY = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_X);
+        rightY = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y);
 
         //left_motor_group.move(leftY);
         //right_motor_group(rightY);
 
         // move the robot
         // prioritize steering slightly
-        //chassis.tank(leftY, leftX, false, 0.75);
+        chassis.tank(leftY, rightY);
 
         // delay to save resources
         pros::delay(25);
@@ -117,19 +117,19 @@ lemlib::ExpoDriveCurve steer_curve(3, // joystick deadband out of 127
                                   10, // minimum output where drivetrain will move out of 127
                                   1.019 // expo curve gain
 );
-
+/*
 // create the chassis
-lemlib::Chassis chassis(drivetrain,
+//lemlib::Chassis chassis(drivetrain,
                         lateral_controller,
                         angular_controller,
                         sensors,
                         &throttle_curve, 
                         &steer_curve
 );
-
+*/
 
 void autonomous(){
     chassis.setPose(0,0,0); //sets starting position in inches(x, y, angle)
-    chassis.moveToPoint(48, 0, 1000, true{.forwards = false, .minSpeed = 30, .maxSpeed = 80}, true);
+    chassis.moveToPoint(48, 0, 1000,{.forwards = false, .maxSpeed = 80, .minSpeed = 30});
     chassis.turnToHeading(90,2000);
 }

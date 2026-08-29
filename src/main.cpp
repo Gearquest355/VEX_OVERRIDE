@@ -100,7 +100,7 @@ void opcontrol() {
 
         // move the robot
         // prioritize steering slightly
-        chassis.tank(leftY, rightY);
+        chassis.tank(rightY, leftY);
 
         // delay to save resources
         pros::delay(25);

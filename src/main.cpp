@@ -20,7 +20,7 @@ lemlib::Drivetrain drivetrain(
 
 
 // IMU
-pros::Imu imu(-9);
+pros::Imu imu(16);
 
 
 // odometry settings
@@ -34,31 +34,27 @@ lemlib::OdomSensors sensors(
 );
 
 
-// lateral PID controller
-lemlib::ControllerSettings lateral_controller(
-    0,//previously 10
-    0,
-    0,//previously 3
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
+lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP) //previously 10
+                                              0, // integral gain (kI)
+                                              3, // derivative gain (kD) //previously 3
+                                              0, // anti windup
+                                              0, // small error range, in inches
+                                              0, // small error range timeout, in milliseconds
+                                              0, // large error range, in inches
+                                              0, // large error range timeout, in milliseconds
+                                              0 // maximum acceleration (slew)
 );
 
 
-// angular PID controller
-lemlib::ControllerSettings angular_controller(
-    3,//previously 2
-    0,
-    14,//previously 10
-    0,
-    0,
-    0,
-    0,
-    0,
-    0
+lemlib::ControllerSettings angular_controller(3, // proportional gain (kP)
+                                              0, // integral gain (kI)
+                                              18.5, // derivative gain (kD)
+                                              0, // anti windup
+                                              0, // small error range, in inches
+                                              0, // small error range timeout, in milliseconds
+                                              0, // large error range, in inches
+                                              0, // large error range timeout, in milliseconds
+                                              0 // maximum acceleration (slew)
 );
 
 
@@ -123,8 +119,8 @@ void opcontrol() {
         );
 
         // Limit speed to 60%
-        leftY = leftY * 60 / 127;
-        rightY = rightY * 60 / 127;
+        leftY = leftY; 
+        rightY = rightY;
 
         chassis.tank(rightY, leftY);
 
@@ -135,7 +131,7 @@ void opcontrol() {
 
 // autonomous
 void autonomous() {
-
+/*
     chassis.setPose(0, 0, 0);
 
     // //chassis.moveToPoint(
@@ -143,5 +139,15 @@ void autonomous() {
     // //);
 
    chassis.turnToHeading(90, 20000);
+   */
 
+  chassis.setPose(0, 0, 0);
+
+chassis.moveToPoint(0, 48, 2000, {.forwards = true, .maxSpeed = 100});
+ 
+chassis.turnToHeading(90, 20000);
 }
+
+
+
+

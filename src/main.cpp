@@ -150,9 +150,9 @@ void opcontrol() {
 
         pros::delay(25);
    
-        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
             cascade.move(127);   // Move up
-        } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+        } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
             cascade.move(-127);  // Move down
         } else {
             cascade.move(0);     // Stop
@@ -160,9 +160,9 @@ void opcontrol() {
 
         pros::delay(25);
 
-         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
+         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
             spin.move(127);   // Move up
-        } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
+        } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
             spin.move(-127);  // Move down
         } else {
             spin.move(0);     // Stop

@@ -8,6 +8,19 @@ MotorGroup left_motor_group({-20, -10}, pros::MotorGears::blue);
 MotorGroup right_motor_group({11, 1}, pros::MotorGears::blue);
 
 
+//intake motor 
+pros::Motor intake(5, pros::v5::MotorGears::green);
+
+//cascade motors
+pros::MotorGroup cascade({-6, 7}, pros::v5::MotorGears::green);
+
+//spin outtake
+pros::Motor spin(8, pros::v5::MotorGears::green);
+
+//move outtake
+pros::Motor move(9, pros::v5::MotorGears::green);
+
+
 // drivetrain settings
 lemlib::Drivetrain drivetrain(
     &left_motor_group,
@@ -125,8 +138,52 @@ void opcontrol() {
         chassis.tank(rightY, leftY);
 
         pros::delay(25);
+
+        // Intake controls
+        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
+            intake.move(127);   // Intake / spin forward
+        } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) {
+            intake.move(-127);  // Outtake / reverse
+        } else {
+            intake.move(0);     // Stop intake
+        }
+
+        pros::delay(25);
+   
+        if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+            cascade.move(127);   // Move up
+        } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+            cascade.move(-127);  // Move down
+        } else {
+            cascade.move(0);     // Stop
+        }
+
+        pros::delay(25);
+
+         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
+            spin.move(127);   // Move up
+        } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_Y)) {
+            spin.move(-127);  // Move down
+        } else {
+            spin.move(0);     // Stop
+        }
+
+
+         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_DOWN)) {
+            move.move(127);   // Move up
+        } else if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+            move.move(-127);  // Move down
+        } else {
+            move.move(0);     // Stop
+        }
+
+        pros::delay(25);
+
     }
 }
+
+    
+
 
 
 // autonomous
@@ -141,7 +198,7 @@ void autonomous() {
    chassis.turnToHeading(90, 20000);
    */
 
-  chassis.setPose(0, 0, 0);
+chassis.setPose(0, 0, 0);
 
 chassis.moveToPoint(0, 48, 2000, {.forwards = true, .maxSpeed = 100});
  

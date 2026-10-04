@@ -9,7 +9,7 @@ MotorGroup right_motor_group({11, 1}, pros::MotorGears::blue);
 
 
 //intake motor 
-pros::Motor intake(5, pros::v5::MotorGears::green);
+pros::Motor intake(5, pros::v5::MotorGears::green); 
 
 //cascade motors
 pros::MotorGroup cascade({-6, 7}, pros::v5::MotorGears::green);
@@ -33,7 +33,7 @@ lemlib::Drivetrain drivetrain(
 
 
 // IMU
-pros::Imu imu(16);
+pros::Imu imu(17);
 
 
 // odometry settings
@@ -46,30 +46,29 @@ lemlib::OdomSensors sensors(
     &imu
 );
 
-
-lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP) //previously 10
-                                              0, // integral gain (kI)
-                                              3, // derivative gain (kD) //previously 3
-                                              0, // anti windup
-                                              0, // small error range, in inches
-                                              0, // small error range timeout, in milliseconds
-                                              0, // large error range, in inches
-                                              0, // large error range timeout, in milliseconds
-                                              0 // maximum acceleration (slew)
+lemlib::ControllerSettings lateral_controller(
+    6.4,    // kP
+    0.0025, // Cut in half to prevent the 0.9" overshoot
+    24.0,   // Raised kD from 20.0 to brake harder at the target
+    0,      // Anti-windup
+    0.2,    // Small error range (0.2 inches)
+    100,    // Small error timeout
+    1.0,    // Large error range
+    500,    // Large error timeout
+    0       // Slew rate
 );
 
-
-lemlib::ControllerSettings angular_controller(3, // proportional gain (kP)
-                                              0, // integral gain (kI)
-                                              18.5, // derivative gain (kD)
-                                              0, // anti windup
-                                              0, // small error range, in inches
-                                              0, // small error range timeout, in milliseconds
-                                              0, // large error range, in inches
-                                              0, // large error range timeout, in milliseconds
-                                              0 // maximum acceleration (slew)
+lemlib::ControllerSettings angular_controller(
+    2.8,   // kP: Kept unchanged to protect straight driving
+    0.005, // Slightly raised from 0.003 to close the remaining 2-degree gap
+    24.0,  // kD: High damping preserved for straight-line stability
+    0,     // Anti-windup
+    0.25,  // Small error range (degrees)
+    100,   // Small error timeout
+    1.0,   // Large error range
+    500,   // Large error timeout
+    0      // Slew rate
 );
-
 
 // create chassis
 lemlib::Chassis chassis(
@@ -198,12 +197,16 @@ void autonomous() {
    chassis.turnToHeading(90, 20000);
    */
 
-chassis.setPose(0, 0, 0);
+chassis.turnToHeading(90, 3000, {.maxSpeed = 70});
+chassis.waitUntilDone();
 
-chassis.moveToPoint(0, 48, 2000, {.forwards = true, .maxSpeed = 100});
- 
-chassis.turnToHeading(90, 20000);
+
+
+// Drive 48 inches straight forward at moderate speed
+    //chassis.moveToPoint(0, 48, 4000, {.forwards = true, .maxSpeed = 70});
+   // chassis.waitUntilDone();
 }
+
 
 
 

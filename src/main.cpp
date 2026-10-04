@@ -47,9 +47,9 @@ lemlib::OdomSensors sensors(
 );
 
 lemlib::ControllerSettings lateral_controller(
-    6.4,    // kP
+    6.4,    // kP-used to be 10
     0.0025, // kI
-    24.0,   // kD 
+    24.0,   // kD-used to be 3
     0,      // Anti-windup
     0.2,    // Small error range (0.2 inches)
     100,    // Small error timeout
@@ -59,9 +59,9 @@ lemlib::ControllerSettings lateral_controller(
 );
 
 lemlib::ControllerSettings angular_controller(
-    2.8,   // kP
+    2.8,   // kP-used to be 3
     0.005, // kI
-    24.0,  // kD
+    24.0,  // kD-used to be 18.5
     0,     // Anti-windup
     0.25,  // Small error range (degrees)
     100,   // Small error timeout

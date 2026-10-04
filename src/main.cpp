@@ -48,8 +48,8 @@ lemlib::OdomSensors sensors(
 
 lemlib::ControllerSettings lateral_controller(
     6.4,    // kP
-    0.0025, // Cut in half to prevent the 0.9" overshoot
-    24.0,   // Raised kD from 20.0 to brake harder at the target
+    0.0025, // kI
+    24.0,   // kD 
     0,      // Anti-windup
     0.2,    // Small error range (0.2 inches)
     100,    // Small error timeout
@@ -59,9 +59,9 @@ lemlib::ControllerSettings lateral_controller(
 );
 
 lemlib::ControllerSettings angular_controller(
-    2.8,   // kP: Kept unchanged to protect straight driving
-    0.005, // Slightly raised from 0.003 to close the remaining 2-degree gap
-    24.0,  // kD: High damping preserved for straight-line stability
+    2.8,   // kP
+    0.005, // kI
+    24.0,  // kD
     0,     // Anti-windup
     0.25,  // Small error range (degrees)
     100,   // Small error timeout

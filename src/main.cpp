@@ -7,7 +7,6 @@ MotorGroup left_motor_group({-20, -10}, pros::MotorGears::blue);
 // right motor group
 MotorGroup right_motor_group({11, 1}, pros::MotorGears::blue);
 
-
 //intake motor 
 pros::Motor intake(5, pros::v5::MotorGears::green); 
 
@@ -25,7 +24,7 @@ pros::Motor move(9, pros::v5::MotorGears::green);
 lemlib::Drivetrain drivetrain(
     &left_motor_group,
     &right_motor_group,
-    10.1,                              // track width make sure this correct**
+    10.1,                              // track width 
     lemlib::Omniwheel::NEW_2,      // 2.75 inch wheels
     450,                             // blue motor RPM
     2                                // horizontal drift
@@ -39,7 +38,7 @@ pros::Rotation rotation_sensor(3); //come back here if change 1 -> -1
 
 //change the port of the rotation sensor ! !! 
 
-//defining tracking wheel 
+//defining tracking wheel-ODOMETRY 
 lemlib::TrackingWheel vertical_tracking_wheel(&rotation_sensor, lemlib::Omniwheel::NEW_2, -0.5); //make sure the -2.5 inch here is changed
 
 // odometry settings
@@ -188,9 +187,10 @@ void opcontrol() {
 
 
 
-// Simple autonomous - no odometry or PID
+
 void redSideAuto() {
 /*
+    //EXAMPLE CODE WITHOUT ODOM OR PID
     // Drive backward at 40% power for 1 second
     left_motor_group.move(-40);
     right_motor_group.move(-40);
@@ -205,112 +205,59 @@ void redSideAuto() {
 }
 // autonomous
 void autonomous() {
+    move.tare_position();
     //redSideAuto();
+    //runnning the intake slowly to keep the pin 
+    spin.move(-5);
 
     chassis.setPose(0, 0, -47);
     //change toggle 
     chassis.moveToPoint(0, 6, 1000, {.minSpeed = 127}); 
+    //change toggle
     chassis.waitUntilDone();
     chassis.moveToPoint(0, -2, 1000,{.forwards = false});
-     chassis.waitUntilDone();
+    //change toggle
+    chassis.waitUntilDone();
     chassis.moveToPoint(0, 6, 1000,{.minSpeed = 127}); 
-     chassis.waitUntilDone();
+    //change toggle
+    chassis.waitUntilDone();
     chassis.moveToPoint(0, -2, 1000,{.forwards = false});
-     chassis.waitUntilDone();
-     chassis.moveToPoint(0, 6, 1000,{.minSpeed = 100}); 
-     chassis.waitUntilDone();
-    chassis.moveToPoint(0, -2, 1000,{.forwards = false});
-     chassis.waitUntilDone();
-    
-    move.move(127);
-    pros::delay(300);
-    move.move(0);
+    chassis.waitUntilDone();
+
+    move.move_absolute(1100, 200); 
+    //this is to move the intake arm 
 
     
-    chassis.moveToPoint(12, -7, 1500, {.forwards = false});
+    chassis.moveToPoint(13, -6, 1500, {.forwards = false});
+    chassis.waitUntilDone();
+    //turning to the red goal, position robot in front of the goal(our color)
 
     spin.move(127);
-    
-
-    /*
-
-    chassis.moveToPoint(0, 6, 1000);
-
-    chassis.moveToPoint(0, -6, 1000, {
-    .forwards = false
-    });
-
-    chassis.moveToPoint(0, 7, 1000);
-
-
-    move.move(127);
-    pros::delay(300);
-    move.move(0);
-
-
-    chassis.moveToPoint(0, -15, 1000, {
-        .forwards = false
-    });
-    
- 
-    spin.move(127);
-    pros::delay(300);
+    pros::delay(200);
     spin.move(0);
+    //drop pin in goal(our color)
+    pros::delay(300);
 
-/*
-  // Drive backward slowly
+    chassis.moveToPoint(0, -6, 1500, {.forwards = true}); //moving back 
+    chassis.waitUntilDone();
 
+    chassis.turnToHeading(-36, 1000);
+    //turn towards pin on the right of the goal
+    chassis.waitUntilDone();
+    //lift intake arm
+    move.move_absolute(1700, 200); 
 
+    chassis.moveToPoint(17.5, -25, 1500, {.forwards = false, .maxSpeed = 60} );
+    //move towards the pin exact position
 
+    //move the intake down, also spin the intake 
+    chassis.waitUntilDone();
+    move.move_absolute(900, -200);
 
-
-
-// Spin the outtake after the robot stops
-spin.move(127);
-pros::delay(500);
-spin.move(0);
-*/
-    
-
-   
-
-
-
-
-
-
-    //chassis.turnToHeading(335, 1500);
-
-    //chassis.turnToHeading(90, 1500);
-
-
-    // //chassis.moveToPoint(
-    //     0, 48, 2000,{ .forwards = true, .maxSpeed = 80}
-    // //);
-
-  // chassis.turnToHeading(90, 20000);
-   
-
-// chassis.turnToHeading(90, 3000, {.maxSpeed = 70});
-// chassis.waitUntilDone();
-
-
-
-// Drive 48 inches straight forward at moderate speed
-    //chassis.moveToPoint(0, 48, 4000, {.forwards = true, .maxSpeed = 70});
-   // chassis.waitUntilDone();
-
+   spin.move(100);
+   pros::delay(400);
+   spin.move(0);
   
-    //chassis.setPose(0, 0, 0);
-
-    // Start the intake
-    //intake.move(127);
-
-    // Drive forward 24 inches
-    //chassis.moveToPoint(0, 24, 2000);
-
-  
-    //intake.move(0);
     
 }
 
